@@ -22,7 +22,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) {
-        Optional<User> existingUser = userService.getUserById(user.getId());
+        Optional<User> existingUser = userService.getUserByEmail(user.getEmail());
         if (existingUser.isPresent() && existingUser.get().getPassword().equals(user.getPassword())) {
             return ResponseEntity.ok("Login successful");
         } else {
