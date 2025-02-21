@@ -4,12 +4,14 @@ import com.hospitalmanagementsystem.healthcare.model.User;
 import com.hospitalmanagementsystem.healthcare.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
     @Autowired
     private UserService userService;
 

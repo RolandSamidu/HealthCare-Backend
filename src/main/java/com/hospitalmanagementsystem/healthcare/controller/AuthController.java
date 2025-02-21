@@ -6,11 +6,13 @@ import com.hospitalmanagementsystem.healthcare.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
     private final UserService userService;
 
     @Autowired
@@ -29,15 +31,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-
-        // Assign default role "USER"
-        User registeredUser = userService.registerUser(user, "USER");
-
-        return ResponseEntity.ok("User registered successfully with role: USER");
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+        try {
+            User user = userService.registerUser(request);
+            return ResponseEntity.ok("User registered successfully with role: " + user.getRole().getName());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 }

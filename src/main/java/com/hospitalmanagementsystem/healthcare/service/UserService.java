@@ -1,5 +1,6 @@
 package com.hospitalmanagementsystem.healthcare.service;
 
+import com.hospitalmanagementsystem.healthcare.model.RegisterRequest;
 import com.hospitalmanagementsystem.healthcare.model.Role;
 import com.hospitalmanagementsystem.healthcare.model.User;
 import com.hospitalmanagementsystem.healthcare.repository.RoleRepository;
@@ -12,6 +13,7 @@ import java.util.*;
 
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -40,16 +42,19 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User registerUser(User user, String roleName) {
+    public User registerUser(RegisterRequest request) {
         // Encrypt password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         // Assign role to user
-        Optional<Role> role = roleRepository.findByName(roleName);
+        Optional<Role> role = roleRepository.findByName(request.getRoleName());
         if (role.isPresent()) {
             user.setRole(role.get());
         } else {
-            throw new RuntimeException("Role not found: " + roleName);
+            throw new RuntimeException("Role not found: " + request.getRoleName());
         }
 
         return userRepository.save(user);
