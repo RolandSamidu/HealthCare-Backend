@@ -12,13 +12,14 @@ import java.util.*;
 
 @Service
 public class UserService {
-    private RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -40,7 +41,17 @@ public class UserService {
     }
 
     public User registerUser(User user, String roleName) {
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // ✅ Encode password
+        // Encrypt password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Assign role to user
+        Optional<Role> role = roleRepository.findByName(roleName);
+        if (role.isPresent()) {
+            user.setRole(role.get());
+        } else {
+            throw new RuntimeException("Role not found: " + roleName);
+        }
+
         return userRepository.save(user);
     }
 }

@@ -1,5 +1,6 @@
 package com.hospitalmanagementsystem.healthcare.controller;
 
+import com.hospitalmanagementsystem.healthcare.model.RegisterRequest;
 import com.hospitalmanagementsystem.healthcare.model.User;
 import com.hospitalmanagementsystem.healthcare.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
-        userService.registerUser(user, "PATIENT");
-        return ResponseEntity.ok("User registered successfully");
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+
+        // Assign default role "USER"
+        User registeredUser = userService.registerUser(user, "USER");
+
+        return ResponseEntity.ok("User registered successfully with role: USER");
     }
 }
