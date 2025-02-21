@@ -12,10 +12,15 @@ import java.util.*;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -35,9 +40,7 @@ public class UserService {
     }
 
     public User registerUser(User user, String roleName) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Optional<Role> role = roleRepository.findByName(roleName);
-        role.ifPresent(r -> user.setRoles(Set.of(r)));
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // ✅ Encode password
         return userRepository.save(user);
     }
 }

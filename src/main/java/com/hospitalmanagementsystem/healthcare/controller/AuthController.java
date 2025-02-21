@@ -2,6 +2,7 @@ package com.hospitalmanagementsystem.healthcare.controller;
 
 import com.hospitalmanagementsystem.healthcare.model.User;
 import com.hospitalmanagementsystem.healthcare.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
@@ -9,7 +10,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private UserService userService;
+    private final UserService userService;
+
+    @Autowired
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) {
@@ -22,8 +28,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user, @RequestParam String roleName) {
-        User registeredUser = userService.registerUser(user, roleName);
-        return ResponseEntity.ok(registeredUser);
+    public ResponseEntity<String> register(@RequestBody User user) {
+        userService.registerUser(user, "PATIENT");
+        return ResponseEntity.ok("User registered successfully");
     }
 }
